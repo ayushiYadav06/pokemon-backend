@@ -27,8 +27,11 @@ const storage = multer.diskStorage({
   },
 });
 
-// Initialize Multer with the storage configuration
-const upload = multer({ storage: storage });
+// Initialize Multer with the storage configuration and limits
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 50 * 1024 * 1024 } // Limit file size to 50MB
+});
 
 router.post("/uploadPokemonImage", upload.single("image"), async (req, res) => {
   if (!req.file) {
@@ -50,9 +53,9 @@ router.post("/uploadPokemonImage", upload.single("image"), async (req, res) => {
   });
 });
 
-router.post("/addNewPokemon", addNewPokémon);
+router.post("/addNewPokemon", upload.single("image"), addNewPokémon);
 router.get("/getAllPokemon", getAllPokémon);
-router.put("/updatePokemon/:pokemonId", updatePokémon);
+router.put("/updatePokemon/:pokemonId", upload.single("image"), updatePokémon);
 router.delete("/deletePokemon/:pokemonId", deletePokémon);
 
 module.exports = router;
